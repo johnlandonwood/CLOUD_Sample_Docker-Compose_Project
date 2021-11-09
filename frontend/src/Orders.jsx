@@ -29,7 +29,7 @@ export class Orders extends React.Component {
                     </div>
                 </nav>
             <div className="container w-50 my-2">
-                <h2>Orders</h2>
+                <h1>Orders</h1>
                 
             </div>
             <div className="container">

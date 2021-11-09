@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { Orders } from './Orders';
+import { Neworder } from './Neworder';
 import axios from 'axios';
 
 // React functional component
@@ -70,6 +71,7 @@ function App () {
   return (
     <div className="App">
       <Orders></Orders>
+      <Neworder></Neworder>
     </div>
   );
 }
