@@ -71,7 +71,6 @@ function App () {
   return (
     <div className="App">
       <Orders></Orders>
-      <Neworder></Neworder>
     </div>
   );
 }

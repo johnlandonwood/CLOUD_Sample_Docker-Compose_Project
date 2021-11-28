@@ -1,6 +1,15 @@
 import React from 'react';
+import { Neworder } from './Neworder';
+import { OrderRow } from '../src/models/orderRow';
+import { OrderTable } from './OrderTable';
+
+// new order form at new order button if rdh manager
+// 
 
 export class Orders extends React.Component {
+    state = {
+        order: new OrderRow(1,"North Texas Food Bank",25,"Mac n Cheese", "11/9/2021 2:16 PM")
+    }
     render(){
         return(
             <div>
@@ -33,7 +42,10 @@ export class Orders extends React.Component {
                 
             </div>
             <div className="container">
-                <table className="table-striped">
+                {/* <OrderTable orders = {this.state.order} />
+                <Neworder></Neworder> */}
+
+                <table className="table table-striped">
                     <thead>
                         <tr>
                         <th scope="col">foodDonationID</th>
