@@ -53,6 +53,17 @@ export class AccountsRepository {
         });
     }
 
+    getOrders() {
+        return new Promise((resolve, reject) => {
+            axios.get(hostname + '/api/getOrders')
+            .then(x => resolve(x.data))
+            .catch(x => {
+                alert(x);
+                reject(x);
+            })
+        });
+    }
+
     // updateUser(id, profile) {}
 
 
