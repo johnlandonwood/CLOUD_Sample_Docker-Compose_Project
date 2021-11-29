@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { Donation } from '../Orders/Donation';
 
 export const OrderList = props => {
     if (!props.orders) {
@@ -47,6 +48,7 @@ export const OrderList = props => {
                             </tr>
                             {
                                 props.orders.map(order => <tr key={order.foodDonationID}>
+                                    <th scope="row"><button type="button" className="btn btn-primary" onClick={<Donation order={order} />}>{order.foodDonationID}</button></th>
                                     <td>{order.soupKitchen}</td> {/*add "<a href" for all columns of row to redirect to order details */}
                                     <td>{order.driverID}</td>
                                     <td>{order.foodName}</td>

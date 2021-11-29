@@ -50,9 +50,20 @@ export class AccountsRepository {
         });
     }
 
-    getOrders() {
+    foodDonations() {
         return new Promise((resolve, reject) => {
-            axios.get(hostname + '/api/getOrders')
+            axios.get(hostname + '/api/foodDonations')
+            .then(x => resolve(x.data))
+            .catch(x => {
+                alert(x);
+                reject(x);
+            })
+        });
+    }
+
+    foodDonation(foodDonationID) {
+        return new Promise((resolve, reject) => {
+            axios.get(hostname + '/api/foodDonation', foodDonationID)
             .then(x => resolve(x.data))
             .catch(x => {
                 alert(x);
