@@ -110,7 +110,11 @@ module.exports = function routes(app, logger) {
   // /api/users
   app.get('/api/users', function (req, res) {
     pool.query("SELECT * FROM users", function (err, result, fields) {
-      if (err) throw err;
+      if (err) {
+        console.log(err);
+        throw err;
+      }
+
       res.end(JSON.stringify(result)); // Result in JSON format
     });
   });
@@ -591,9 +595,9 @@ module.exports = function routes(app, logger) {
 //BRIGITTA'S ROUTES
 
 //GET a paritcular user, given a userID
-//	/api/user
+//	/api/user/:userID
 //tested
-app.get('/users/:userID', function (req, res) {
+app.get('/api/user/:userID', function (req, res) {
   var userID = req.param('userID');
   pool.query("SELECT * FROM users WHERE userID = ?", userID, function (err, result, fields) {
     if (err) throw err;
@@ -604,7 +608,7 @@ app.get('/users/:userID', function (req, res) {
 //POST a new user - registering 
 //  /api/user
 //tested
-app.post('/users/', async (req, res) => {
+app.post('/api/user', async (req, res) => {
   var userType = req.param("userType");
   var username = req.param("username");
   var userPassword = req.param("userPassword");
@@ -618,33 +622,20 @@ app.post('/users/', async (req, res) => {
   });
 });
 
-//POST a paritcular user, given username and userPassword - login
-//  /api/user
 //tested
-
-app.post('/login', function (req, res) {
+app.post('/api/login', function (req, res) {
   var username = req.body.username;
   var userPassword = req.body.userPassword;
-  pool.query(`SELECT userID FROM users WHERE username = "${req.body.username}" && userPassword = "${req.body.userPassword}"`, function (err, result, fields) {
+  pool.query(`SELECT userID FROM users WHERE username = ? && userPassword = ?`, [username, userPassword], function (err, result, fields) {
     if (err) throw err;
     res.end(JSON.stringify(result)); 
   });
 });
 
-
-// app.get('/login', function (req, res) {
-//   var username = req.param('username');
-//   var userPassword = req.param('userPassword');
-//   pool.query("SELECT * FROM users WHERE username = ? && userPassword = ?", [username, userPassword], function (err, result, fields) {
-//     if (err) throw err;
-//     res.end(JSON.stringify(result)); 
-//   });
-// });
-
-//PUT to update users profile informationn
-// /api/user/updateProfileInformation
+//PUT to update users profile information given userID
+// /api/user
 //tested
-app.put('/api/user/updateProfileInformation', async (req, res) => {
+app.put('/api/user', async (req, res) => {
   var userID = req.param('userID');
   var userType = req.param('userType');
   var username = req.param("username");
@@ -659,7 +650,7 @@ app.put('/api/user/updateProfileInformation', async (req, res) => {
   });
 });
 
-//PUT to update users validation 
+//PUT to update users validation given userID
 // /api/user/updateValidated
 //tested
 app.put('/api/user/updateValidated', async (req, res) => {
@@ -672,10 +663,76 @@ app.put('/api/user/updateValidated', async (req, res) => {
   });
 });
 
-//GET foodDonationID, soupKitchen, driverID, foodName, and timeMade for all orders
-//  /api/getOrders
-app.get('/api/getOrders', function (req, res) {
+//GET foodDonationID, soupKitchen, driverID, foodName, and timeMade for all foodDonations
+//  /api/foodDonations
+//tested
+app.get('/api/foodDonations', function (req, res) {
   pool.query("SELECT f.foodDonationID, f.soupKitchenID, d.driverID, f.foodName, f.timeMade FROM foodDonations f JOIN drivers d ON f.foodDonationID = d.foodDonationID", function (err, result, fields) {
+    if (err) throw err;
+    res.end(JSON.stringify(result)); 
+  });
+});
+
+//GET a particular foodDonation, given foodDonationID
+//  /api/foodDonation
+//tested
+app.get('/api/foodDonation', function (req, res) {
+  var foodDonationID = req.param('foodDonationID');
+  pool.query("SELECT * FROM foodDonations WHERE foodDonationID = ?", foodDonationID, function (err, result, fields) {
+    if (err) throw err;
+    res.end(JSON.stringify(result)); 
+  });
+});
+
+//GET a particular user, given RDH_ID
+//  /api/user/RDH
+//tested
+app.get('/api/user/:RDH_ID', function (req, res) {
+  var RDH_ID = req.param('RDH_ID');
+  pool.query("SELECT u.userID, u.userType, u.username, u.userPassword, u.imgURL, u.phoneNumber, u.email, u.validated FROM users u INNER JOIN RDH r ON u.userID = r.userID WHERE RDH_ID = ?", RDH_ID, function (err, result, fields) {
+    if (err) throw err;
+    res.end(JSON.stringify(result)); 
+  });
+});
+
+//POST a new donation 
+//  /api/foodDonation
+//tested
+app.post('/api/foodDonation', async (req, res) => {
+  var RDH_ID = req.param("RDH_ID");
+  var soupKitchenID = req.param("soupKitchenID");
+  var foodName = req.param("foodName");
+  var foodCategory = req.param("foodCategory");
+  var timeMade = req.param("timeMade");
+  var expirationDate = req.param("expirationDate");
+  var photoURL = req.param("photoURL");
+  var preservationType = req.param("preservationType");
+  var donationDescription = req.param("donationDescription");
+  var quantity = req.param("quantity");
+  pool.query("INSERT INTO foodDonations (RDH_ID, soupKitchenID, foodName, foodCategory, timeMade, expirationDate, photoURL, preservationType, donationDescription, quantity) VALUES (?,?,?,?,?,?,?,?,?,?)", 
+  [RDH_ID, soupKitchenID, foodName, foodCategory, timeMade, expirationDate, photoURL, preservationType, donationDescription, quantity],function (err, result, fields) {
+    if (err) throw err;
+    res.end(JSON.stringify(result)); 
+  });
+});
+
+//DELETE a particular foodDonation given foodDonationID
+//  /api/foodDonation
+//tested
+app.delete('/api/foodDonation', async (req, res) => {
+  var foodDonationID = req.param("foodDonationID");
+  pool.query("DELETE FROM foodDonations WHERE foodDonationID = ?", foodDonationID, function (err, result, fields) {
+    if (err) throw err;
+    res.end(JSON.stringify(result)); 
+    });
+});
+
+//GET all users given a specified userType
+//  /api/users/:userType
+//tested
+app.get('/api/users/:userType', function (req, res) {
+  var userType = req.param('userType');
+  pool.query("SELECT * FROM users WHERE userType = ?", userType, function (err, result, fields) {
     if (err) throw err;
     res.end(JSON.stringify(result)); 
   });
