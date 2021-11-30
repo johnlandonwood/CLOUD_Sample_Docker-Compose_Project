@@ -63,7 +63,7 @@ export class AccountsRepository {
 
     foodDonation(foodDonationID) {
         return new Promise((resolve, reject) => {
-            axios.get(hostname + '/api/foodDonation', foodDonationID)
+            axios.get(hostname + '/api/foodDonation'+foodDonationID)
             .then(x => resolve(x.data))
             .catch(x => {
                 alert(x);

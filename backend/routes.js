@@ -676,7 +676,7 @@ app.get('/api/foodDonations', function (req, res) {
 //GET a particular foodDonation, given foodDonationID
 //  /api/foodDonation
 //tested
-app.get('/api/foodDonation', function (req, res) {
+app.get('/api/foodDonation/:foodDonationID', function (req, res) {
   var foodDonationID = req.param('foodDonationID');
   pool.query("SELECT * FROM foodDonations WHERE foodDonationID = ?", foodDonationID, function (err, result, fields) {
     if (err) throw err;
