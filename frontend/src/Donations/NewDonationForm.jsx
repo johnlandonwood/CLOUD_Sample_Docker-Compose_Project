@@ -14,8 +14,8 @@ export class NewDonationForm extends React.Component {
         soupKitchenID: 0,
         foodName: "",
         foodCategory: "",
-        timeMade: undefined,
-        expirationDate: undefined,
+        timeMade: "",
+        expirationDate: "",
         photoURL: "",
         preservationType: "",
         donationDescription: "",
@@ -135,7 +135,7 @@ export class NewDonationForm extends React.Component {
                             onChange={ e => this.setSoupKitchenID(e.target.value)}
                         >
                                     {
-                                        this.state.soupKitchenIDs.map((x, i) => <option key={ i }>{ x.userID }</option>)
+                                        this.state.soupKitchenIDs.map((x, i) => <option key={ i }>{ x.soupKitchenID }</option>)
                                     }
                         </select>
                     </div>
@@ -214,11 +214,17 @@ export class NewDonationForm extends React.Component {
 
     }
 
+    async getRDH_ID() {
+        const response = await this.donationsRepository.getRDHFromUser(sessionStorage.userID)
+
+        if (response) {
+            this.setState({RDH_ID: response[0].RDH_ID})
+        }
+    }
+
     componentDidMount() {
-        // If user can view this page, they are an RDH owner. Admin as well?
-        // Nah, admin as well is too much work. Admin shouldn't be able to create new donations.
-        // Actually check user stories
         this.populateSoupKitchenIDs();
+        this.getRDH_ID();
     }
 
 }

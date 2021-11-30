@@ -783,6 +783,15 @@ app.get('/api/rdhs/:RDH_ID', function (req, res) {
   });
 });
 
+app.get('/api/users/rdhs/:userID', function (req, res) {
+  var userID = req.param('userID');
+  pool.query("SELECT RDH_ID from RDH r INNER JOIN users u ON u.userID = r.userID WHERE u.userID = ?", userID, function (err, result, fields) {
+    if (err) throw err;
+    res.end(JSON.stringify(result)); 
+  });
+});
+
+
 //POST a new donation 
 //  /api/foodDonations
 //tested
@@ -797,7 +806,7 @@ app.post('/api/foodDonations', async (req, res) => {
   var preservationType = req.param("preservationType");
   var donationDescription = req.param("donationDescription");
   var quantity = req.param("quantity");  
-  pool.query("INSERT INTO foodDonations (RDH_ID, soupKitchenID, foodName, foodCategory, timeMade, expirationDate, photoURL, preservationType, donationDescription, quantity, claimed) VALUES (?,?,?,?,?,?,?,?,?,?,?,0)", 
+  pool.query("INSERT INTO foodDonations (RDH_ID, soupKitchenID, foodName, foodCategory, timeMade, expirationDate, photoURL, preservationType, donationDescription, quantity, claimed) VALUES (?,?,?,?,?,?,?,?,?,?,0)", 
   [RDH_ID, soupKitchenID, foodName, foodCategory, timeMade, expirationDate, photoURL, preservationType, donationDescription, quantity],function (err, result, fields) {
     if (err) throw err;
     res.end(JSON.stringify(result)); 
@@ -850,61 +859,61 @@ app.put('/api/foodDonation/:foodDonationID/:claimed', async (req, res) => {
   });
 });
 
-const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcryptjs');
 
-function hashPassword(password) {
-  const saltRounds = 10;
-  const hashedPassword = new Promise((resolve, reject) => {
-    bcrypt.hash(password, saltRounds, function(err, hash) {
-      if (err) reject(err)
-      resolve(hash)
-    });
-  })
-  return hashedPassword
-}
+// function hashPassword(password) {
+//   const saltRounds = 10;
+//   const hashedPassword = new Promise((resolve, reject) => {
+//     bcrypt.hash(password, saltRounds, function(err, hash) {
+//       if (err) reject(err)
+//       resolve(hash)
+//     });
+//   })
+//   return hashedPassword
+// }
 
-//register route that takes a userType, username userPassword, imgURL, phoneNumber, and email  and stores the hashed password in the DB not the plaintext password
-app.post('/api/register', (req, res) => {
-  var userType = req.body.userType
-  var username = req.body.username
-  var userPassword = req.body.userPassword
-  var imgURL = req.body.imgURL
-  var phoneNumber = req.body.phoneNumber
-  var email = req.body.email
-    bcrypt.hash(userPassword, 1, function(err, hash) {
-      pool.query("INSERT INTO users (userType, username, userPassword, imgURL, phoneNumber, email, validated) VALUES (?,?,?,?,?,?,0)", 
-      [userType, username, hash, imgURL, phoneNumber, email], function (err, result, fields) {
-      if (err) {
-        throw err;
-      } 
-      res.end(JSON.stringify(result));
-      });
-    });
-});
+// //register route that takes a userType, username userPassword, imgURL, phoneNumber, and email  and stores the hashed password in the DB not the plaintext password
+// app.post('/api/register', (req, res) => {
+//   var userType = req.body.userType
+//   var username = req.body.username
+//   var userPassword = req.body.userPassword
+//   var imgURL = req.body.imgURL
+//   var phoneNumber = req.body.phoneNumber
+//   var email = req.body.email
+//     bcrypt.hash(userPassword, 1, function(err, hash) {
+//       pool.query("INSERT INTO users (userType, username, userPassword, imgURL, phoneNumber, email, validated) VALUES (?,?,?,?,?,?,0)", 
+//       [userType, username, hash, imgURL, phoneNumber, email], function (err, result, fields) {
+//       if (err) {
+//         throw err;
+//       } 
+//       res.end(JSON.stringify(result));
+//       });
+//     });
+// });
 
 //login route that returns userID or empty array, given the username and pasword stored in the DB (hashed password)
 //returns userID if hashed password matches password and an empty array if they do not match
-app.post('/api/loginHash', (req, res) => {
-  var username = req.body.username
-  var userPassword = req.body.userPassword
-  pool.query("SELECT userPassword, userID FROM users WHERE username = ?", username, function (err, result, fields) {
-    console.log(result)
-    console.log(result[0].userPassword)
-    console.log(userPassword)
-      bcrypt.compare(userPassword, result[0].userPassword, function(err, isMatch) {
-        if(err) {
-          throw err;
-        } else if (!isMatch){
-            console.log("Password doesn't match!") 
-            emptyArray = []
-            res.end(JSON.stringify(emptyArray)); //if password doesn't match return empty array
-        } else {
-            console.log("Password matches!")
-            res.end(JSON.stringify([result[0].userID])); //if password matches return userID
-        }
-      });
-  }); 
-});
+// app.post('/api/loginHash', (req, res) => {
+//   var username = req.body.username
+//   var userPassword = req.body.userPassword
+//   pool.query("SELECT userPassword, userID FROM users WHERE username = ?", username, function (err, result, fields) {
+//     console.log(result)
+//     console.log(result[0].userPassword)
+//     console.log(userPassword)
+//       bcrypt.compare(userPassword, result[0].userPassword, function(err, isMatch) {
+//         if(err) {
+//           throw err;
+//         } else if (!isMatch){
+//             console.log("Password doesn't match!") 
+//             emptyArray = []
+//             res.end(JSON.stringify(emptyArray)); //if password doesn't match return empty array
+//         } else {
+//             console.log("Password matches!")
+//             res.end(JSON.stringify([result[0].userID])); //if password matches return userID
+//         }
+//       });
+//   }); 
+// });
 
 // GET all donations associated with a specific userID
 // api/users/foodDonations/:userID
