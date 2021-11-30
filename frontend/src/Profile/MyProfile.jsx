@@ -85,7 +85,7 @@ export class MyProfile extends React.Component {
                             So anywhere we check for an admin only component, we check sessionstorage rather than the userType of state?
                             I think that's how that will work.
                         */}
-                        {this.state.userType === 4 &&
+                        {/* {this.state.userType === 4 &&
                         // Add userType to sessionstorage and replace this check with sessionstorage.userType === 4.
                         // Do this once navving to other's profiles has been implemented.
                             <div className="container my-3">
@@ -97,7 +97,7 @@ export class MyProfile extends React.Component {
                                     <input type="radio" className="mx-2"id="not_verified" name="verification" checked={this.state.verified === 0}/>
                                 </form>
                             </div>
-                        }
+                        } */}
 
                     </div>
                     
